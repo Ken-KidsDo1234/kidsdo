@@ -1,0 +1,16 @@
+# Log Files
+*.log
+
+# Clasp
+.clasp.json
+
+# VS Code Settings
+.vscode/
+
+# Temporary Files
+*.tmp
+*.bak
+
+# Windows
+Thumbs.db
+Desktop.ini
