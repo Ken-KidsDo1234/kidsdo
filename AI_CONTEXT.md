@@ -117,3 +117,30 @@ Claude
  ✅ สร้าง Notification
 
 โดยไม่ต้องรื้อ Apps Script เดิมเลย
+
+Current Priority
+Priority 1
+
+ปัญหาปัจจุบัน:
+
+เมื่อเปิด KidsDo ระบบพาไปหน้า Admin Login ทันที
+
+สิ่งที่ต้องการ:
+
+เปิดแล้วเข้าหน้าเว็บไซต์หลัก
+ผู้ใช้ทั่วไปเห็นหน้า Public Website
+Login เฉพาะเมนูที่ต้องใช้สิทธิ์สมาชิก
+Priority 2
+
+เมนูย่อยต้องเปิดเป็นหน้าเว็บไซต์แยกกัน
+
+ปัจจุบัน:
+
+แสดงข้อมูลต่อกันในหน้าเดียว
+เป้าหมาย:
+
+/ /news /music /gallery /documents /calendar /member
+
+Priority 3
+
+ตรวจสอบ Error ทั้งระบบ
