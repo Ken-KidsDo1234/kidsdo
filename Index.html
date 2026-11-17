@@ -237,7 +237,8 @@ background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.22) 38
       <div class="kids-library-copy"><span class="kids-library-kicker">LISTEN • CREATE • SHARE</span><h3>คลังเพลง <small>Music</small></h3><p>ฟังเพลง เพลิดเพลิน และแบ่งปันเสียงดนตรีจาก Kids Do</p><button onclick="openLibrary('Music')">เปิดคลังเพลง <i class="fa-solid fa-arrow-right"></i></button></div>
     </article>
     <article class="kids-library-card picture-card">
-      <div class="kids-library-art cover-picture" aria-hidden="true"><img class="kids-library-cover" data-cover="Picture" alt="ภาพปกคลังภาพ Kids Do"></div>
+     
+  <div class="kids-library-art cover-picture" aria-hidden="true"><img class="kids-library-cover" data-cover="Picture" alt="ภาพปกคลังภาพ Kids Do"></div>
       <div class="kids-library-copy"><span class="kids-library-kicker">CAPTURE • EXPLORE • SHARE</span><h3>คลังภาพ <small>Picture</small></h3><p>ชมภาพความทรงจำ ไอเดียสร้างสรรค์ และผลงานต่าง ๆ</p><button onclick="openLibrary('Picture')">เปิดคลังภาพ <i class="fa-solid fa-arrow-right"></i></button></div>
     </article>
     <article class="kids-library-card document-card">
@@ -277,8 +278,7 @@ background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.22) 38
 // Kids Do TEST Round 7: Calendar groups, role-based colours, filters and responsive views
 var TOKEN='', CURRENT_USER=null, CURRENT_MODULE='', CURRENT_ID='', PUBLIC_DATA={};
 var MODULES=[
- {name:'ข่าวประชาสัมพันธ์',sheet:'News',get:'getNews',save:'saveNews',del:'deleteNews'},
- {name:'กิจกรรม',sheet:'Activities',get:'getActivities',save:'saveActivity',del:'deleteActivity'},
+ {name:'ข่าวประชาสัมพันธ์',sheet:'News',get:'getNews',save:'saveNews',del:'deleteNews'},{name:'กิจกรรม',sheet:'Activities',get:'getActivities',save:'saveActivity',del:'deleteActivity'},
  {name:'Banner',sheet:'Banners',get:'getBanners',save:'saveBanner',del:'deleteBanner'},
  {name:'บุคลากร',sheet:'Staff',get:'getStaff',save:'saveStaff',del:'deleteStaff'},
  {name:'ผลงานและรางวัล',sheet:'Awards',get:'getAwards',save:'saveAward',del:'deleteAward'},
@@ -288,8 +288,18 @@ var MODULES=[
  {name:'Popup',sheet:'Popups',get:'getPopups',save:'savePopup',del:'deletePopup'}
 ];
 function asArray(v){return Array.isArray(v)?v:[];}
-function escapeHtml(v){return String(v===null||v===undefined?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function safeExternalUrl(v){var u=String(v||'').trim();return /^https?:\/\//i.test(u)?u:'';}
+function escapeHtml(v){
+  return String(v===null || v===undefined ? '' : v)
+    .replace(/[&<>"']/g, function(c){
+      return {
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#39;'
+      }[c];
+    });
+}
 function showBusy(on,msg){var b=document.getElementById('busy');b.classList.toggle('hidden',!on);b.style.display=on?'grid':'none';b.textContent=msg||'กำลังดำเนินการ...';}
 function callApi(fn,args,done,fail){
  showBusy(true);
