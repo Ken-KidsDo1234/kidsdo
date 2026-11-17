@@ -824,3 +824,24 @@ flowchart TD
     classDef model fill:#FFF1C9,stroke:#C58A12,color:#604400,stroke-width:2px
     class A,B,C,D,E,F,G model
 
+Fixed Issues
+Include File Reference Error
+Problem:
+
+Index.html called
+
+include('MemberComms')
+
+but the project only contained
+
+MemberCommsUI.html
+
+Fix:
+
+Changed to
+
+include('MemberCommsUI')
+
+Status:
+
+Testing
