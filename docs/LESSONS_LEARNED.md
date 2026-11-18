@@ -148,3 +148,30 @@ Potentially dangerous values found:
 Highest priority:
 1. </script>
 2. javascript:alert(1)
+
+## 2026-11-15 Progress
+
+### Confirmed
+
+- Google Sheet connection verified
+- Google Drive connection verified
+- Deployment uses latest source code
+- TEST VERSION banner appeared successfully
+- MemberCommsUI include verified
+
+### Investigation
+
+Browser still reports:
+
+userCodeAppPanel:273
+Unexpected token ';'
+
+Source code parses successfully.
+
+### Current Hypothesis
+
+The error is likely caused by runtime-rendered content or data retrieved from Google Sheets rather than static source files.
+
+### Next Step
+
+Run auditSheetData() and review suspicious_data_report.csv.
