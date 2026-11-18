@@ -199,3 +199,20 @@ Patterns checked:
 
 Output:
 suspicious_data_report.csv
+
+### Current Primary Suspect
+
+MemberCommsUI.html
+
+Function:
+commShowAttachment_()
+
+Current code uses:
+
+w.document.write(...)
+
+Potential issue:
+Runtime-generated HTML may differ from static parse results.
+
+Recommended improvement:
+Replace document.write() with DOM-based rendering.
