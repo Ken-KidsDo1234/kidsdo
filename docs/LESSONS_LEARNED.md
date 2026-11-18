@@ -133,3 +133,18 @@ If TEST VERSION banner appears in browser:
 2. Dynamically generated onclick attributes
 3. Data values from Google Sheets or runtime API responses
 4. Browser-rendered code differs from static file parsing
+
+### Suspicious Sheet Data
+
+Potentially dangerous values found:
+
+- Users.username = O'Brien
+- Users.name = John\Smith
+- Calendar.title = Meeting;Test
+- Links.url = javascript:alert(1)
+- News.title = </script>
+- Settings.siteName = Kids "Do"
+
+Highest priority:
+1. </script>
+2. javascript:alert(1)
