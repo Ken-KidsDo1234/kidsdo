@@ -22,3 +22,13 @@
 2. ตรวจ document.write()
 3. ตรวจ appendChild()
 4. หา source ของ SyntaxError line 273
+
+
+## Investigation Result
+
+- Deployment ได้รับโค้ดล่าสุดแล้ว
+- TEST VERSION แสดงผลสำเร็จ
+- MemberCommsUI parse ผ่าน
+- No stray semicolon found
+- 21 onclick handlers use escapeHtml but are not proven to cause the SyntaxError
+- Remaining suspect: Apps Script template output rendered into client JavaScript
