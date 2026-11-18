@@ -216,3 +216,153 @@ Runtime-generated HTML may differ from static parse results.
 
 Recommended improvement:
 Replace document.write() with DOM-based rendering.
+
+# KidsDo Debug Session
+
+Date: 2026-11-15
+
+## สิ่งที่ตรวจสอบแล้ว
+
+### GitHub
+
+✅ GitHub ทำงานปกติ
+
+✅ Push สำเร็จ
+
+✅ โค้ดในเครื่องและ GitHub ตรงกัน
+
+---
+
+### Google Integration
+
+✅ Google Sheet เชื่อมต่อได้
+
+SHEET_ID
+
+1k2KF_yaveq0pivXVtl2A22jeoynogXQEydSGNU3PXJs
+
+✅ Google Drive เชื่อมต่อได้
+
+FOLDER_ID
+
+1SkqO0qa-EgnNlOXVqFG3f8ULVROV4LAO
+
+---
+
+### Source Code
+
+✅ Code.js ถูกตรวจสอบแล้ว
+
+✅ doGet() ถูกต้อง
+
+✅ openLogin() มีอยู่จริง
+
+✅ MemberComms → MemberCommsUI ถูกแก้แล้ว
+
+✅ escapeHtml() ถูกแก้แล้ว
+
+✅ Source Code Parse ผ่าน
+
+✅ Index.html Parse ผ่าน
+
+✅ PublicPages.html Parse ผ่าน
+
+✅ MemberCommsUI.html Parse ผ่าน
+
+---
+
+### Deployment
+
+✅ TEST VERSION แสดงผลบนหน้าเว็บ
+
+ข้อสรุป:
+
+Apps Script Deployment ใช้โค้ดล่าสุดจริง
+
+ไม่ใช่ปัญหา Version mismatch
+
+---
+
+### Data Audit
+
+✅ สร้าง auditSheetData()
+
+✅ ตรวจ Users
+
+✅ ตรวจ News
+
+✅ สร้าง suspicious_data_report.csv
+
+ผลลัพธ์:
+
+ไม่พบข้อมูลอันตรายที่อธิบาย Error ได้
+
+พบเพียง User-Agent ใน Sheet Visitors
+
+---
+
+## ปัญหาที่ยังเหลือ
+
+Browser Console
+
+```text
+userCodeAppPanel:273
+Uncaught SyntaxError: Unexpected token ';'
+```
+
+ยังไม่สามารถระบุต้นเหตุได้
+
+---
+
+## ผู้ต้องสงสัยหลัก
+
+### MemberCommsUI.html
+
+ฟังก์ชัน
+
+```javascript
+commShowAttachment_()
+```
+
+ใช้
+
+```javascript
+document.write(...)
+```
+
+AI แนะนำให้เปลี่ยนเป็น
+
+```javascript
+createElement()
+appendChild()
+```
+
+แทน
+
+ยังไม่ได้พิสูจน์ว่าเป็นสาเหตุ 100%
+
+แต่เป็นผู้ต้องสงสัยอันดับ 1
+
+---
+
+## สิ่งที่ต้องทำต่อ
+
+1. แก้ commShowAttachment_() ตาม Diff ที่ AI แนะนำ
+
+2. Deploy ใหม่
+
+3. ตรวจ Console อีกครั้ง
+
+4. หาก Error ยังอยู่
+
+ให้ตรวจ HTML/JavaScript ที่ถูก Render จริงจาก Browser
+
+5. ห้ามเสียเวลาตรวจ
+
+- Code.js
+- doGet()
+- Deployment mismatch
+- Google Sheet ID
+- Google Drive ID
+
+เพราะพิสูจน์แล้วว่าไม่ใช่ต้นเหตุ
