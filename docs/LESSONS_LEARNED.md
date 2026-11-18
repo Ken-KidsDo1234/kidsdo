@@ -1,0 +1,24 @@
+
+# KidsDo Lessons Learned
+
+## Findings
+
+- Google Sheet ID ถูกต้อง
+- Google Drive Folder IDs ถูกต้อง
+- include('MemberComms') ต้องเปลี่ยนเป็น include('MemberCommsUI')
+- Code.js เคยมีข้อความเอกสารปะปน
+- Deployment ต้องตรวจสอบด้วย TEST VERSION
+- Apps Script และ VS Code ต้องเป็นโค้ดชุดเดียวกัน
+
+## Open Issues
+
+- Console ยังแสดง:
+  - Unexpected token ';'
+  - userCodeAppPanel line 273
+
+## Next Steps
+
+1. ตรวจ MemberCommsUI.html
+2. ตรวจ document.write()
+3. ตรวจ appendChild()
+4. หา source ของ SyntaxError line 273
