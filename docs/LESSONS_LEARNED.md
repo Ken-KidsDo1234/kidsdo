@@ -175,3 +175,27 @@ The error is likely caused by runtime-rendered content or data retrieved from Go
 ### Next Step
 
 Run auditSheetData() and review suspicious_data_report.csv.
+
+## Added Tools
+
+### auditSheetData()
+
+Purpose:
+- Scan all Google Sheets tabs
+- Detect suspicious values
+- Export suspicious_data_report.csv
+
+Patterns checked:
+
+- '
+- "
+- \
+- </script>
+- <script
+- javascript:
+- onclick=
+- onerror=
+- ;
+
+Output:
+suspicious_data_report.csv
