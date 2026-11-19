@@ -366,3 +366,70 @@ appendChild()
 - Google Drive ID
 
 เพราะพิสูจน์แล้วว่าไม่ใช่ต้นเหตุ
+
+### Latest Analysis
+
+AI reviewed:
+
+- drawRows()
+- renderCalendarContent()
+- commRenderMessages()
+
+Finding:
+
+The strongest remaining hypothesis is dynamically generated onclick handlers constructed using string concatenation and escapeHtml().
+
+Static source files continue to parse successfully.
+
+Current Work Item:
+
+Audit generated onclick handlers.
+
+## 2026-11-15 Handler Audit
+
+### Files Reviewed
+
+- Index.html
+- PublicPages.html
+- MemberCommsUI.html
+
+### Findings
+
+Found 9 dynamic onclick handlers that construct JavaScript using:
+
+escapeHtml(...)
+
+Examples:
+
+- reviewCalendar(r.id)
+- editRecord(r.id)
+- removeRecord(r.id)
+- showCalendarEvent(e.id)
+- showCalendarGroup(e.groupId)
+- commShowAttachment_(a.id)
+- commDelete_(m.id)
+
+### Important Note
+
+escapeHtml() performs HTML escaping only.
+
+It does NOT perform JavaScript-string escaping.
+
+Potentially dangerous characters:
+
+- apostrophe (')
+- backslash (\)
+
+### Conclusion
+
+This is a code-quality issue and potential bug source.
+
+However, no evidence currently proves it is the direct cause of:
+
+userCodeAppPanel:273
+Unexpected token ';'
+
+### Status
+
+Investigation continues.
+
