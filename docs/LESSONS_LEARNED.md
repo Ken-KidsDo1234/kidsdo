@@ -554,32 +554,27 @@ Do not assume parse failure based only on typeof openLogin from the parent frame
 - Added `escapeJsAttr()` to JSON-encode an argument and then HTML-escape it. Updated affected generated handlers in `Index.html` and `MemberCommsUI.html`.
 - Public route handlers were left unchanged because their route keys are fixed and record IDs are restricted to safe characters.
 - The composed client script parses, and handler arguments round-trip correctly for apostrophes, quotes, backslashes, newlines, semicolons, and script-like input.
-- This fixes the unsafe handler construction, but does not confirm it caused the reported `Unexpected token ';'`; a runtime/deployed-page error remains unverified.
+- This fixes unsafe handler construction; the production `Unexpected token ';'` was later traced to less-than operators in included inline scripts being emitted as literal `&lt;`.
+
+## 2026-11-18 Included Script Syntax Error
+
+- The active `/exec` deployment still failed to open Login after the saved source and deployment version were checked.
+- Runtime inspection showed `out.indexOf(u)&lt;0`, `out.indexOf(cover)&lt;0`, and `.length&lt;3` in scripts included from `PublicPages.html` and `MemberCommsUI.html`. These literal entities are invalid JavaScript operators and prevent `openLogin()` from being defined.
+- Rewrote those predicates without less-than operators (`=== -1` and inverted `>= 3` validation), preserving their behavior while avoiding the malformed runtime output.
+- Re-deploy the saved source and verify the live Login dialog opens; do not enter credentials during the smoke test.
 
 ### Session End
 
 Date: 2026-11-15
 Time: 20:15 PST
 
-Current Status
-
-- Deployment verified
-- TEST VERSION verified
-- Google Sheet verified
-- Google Drive verified
-- Source parsing verified
-
-Outstanding Issue
-
-userCodeAppPanel:273
-Unexpected token ';'
+Current status: included-script predicates have been rewritten to avoid the malformed `&lt;` output. The live deployment still needs a post-deploy Login smoke test.
 
 Latest Findings
 
-- Dynamic onclick handlers audited
-- Added escapeJsAttr()
-- Refactored attachment viewer investigation
-- Root cause still not confirmed
+- Dynamic onclick handlers audited and escaped with `escapeJsAttr()`
+- Runtime syntax error traced to escaped less-than operators in included client scripts
+- Login must be retested after publishing the saved source
 
 
 ### File Size Investigation
@@ -603,4 +598,33 @@ and not caused by repeated saves.
 Future improvement:
 
 Move large embedded images out of Index.html and load them as separate files.
+
+## 2026-11-18 Handoff for 2026-11-19
+
+### Current finding
+
+- The served Apps Script HTML contained 66 literal `&#43;` entities inside JavaScript from included files. These are absent from the source files and are invalid JavaScript when emitted as script code.
+- The current working theory is that the include directives were inside the main `<script>`, causing included content to be escaped in that context. The structural fix is not yet confirmed on the live deployment.
+
+### Prepared locally
+
+- `Index.html` now closes its main script before including `PublicPages` and `MemberCommsUI`.
+- `PublicPages.html` and `MemberCommsUI.html` now wrap their client code in their own `<script>` tags.
+- Local assembled JavaScript parsing and `git diff --check` passed.
+- These workspace changes are saved locally but have not been committed.
+
+### Apps Script editor state
+
+- The editor still has unsaved changes. `PublicPages.html` has an unsaved script wrapper.
+- `Index.html` and `MemberCommsUI.html` have not yet been updated in the remote project.
+- Nothing has been saved or deployed remotely after the structural fix; the live login menu has not been retested.
+
+### Next session — do these in order
+
+1. Reopen the Apps Script editor and inspect its unsaved state; do not assume the partial `PublicPages.html` edit is complete.
+2. Make the remote `Index.html`, `PublicPages.html`, and `MemberCommsUI.html` match the local structural fix, then review the three files together.
+3. Save the Apps Script project and verify the editor reports no unsaved changes.
+4. Update the existing web-app deployment to a new version.
+5. Test the live `/exec` page: check for JavaScript syntax errors and confirm the Login dialog opens. Do not enter credentials.
+6. Record the deployment and smoke-test results here. Do not mark the issue fixed unless the live test passes.
 

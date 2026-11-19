@@ -1,4 +1,5 @@
-/* Member communications UI; included inside Index.html's main script. */
+<script>
+/* Member communications UI. */
 function commCall_(name,args,done){var run=google.script.run.withSuccessHandler(function(r){if(!r||!r.success){Swal.fire('ไม่สำเร็จ',escapeHtml(r&&r.message||'เกิดข้อผิดพลาด'),'error');return;}if(done)done(r.data);}).withFailureHandler(function(e){Swal.fire('เชื่อมต่อไม่สำเร็จ',escapeHtml(e&&e.message||e||'เกิดข้อผิดพลาด'),'error');});run[name].apply(run,args||[]);}
 function commIsAdmin_(){return !!(CURRENT_USER&&['Admin','Super Admin'].indexOf(CURRENT_USER.role)>=0);}
 function mountMemberCommunications(){if(!TOKEN||!CURRENT_USER)return;var old=document.getElementById('kidsCommLauncher');if(old)return;var b=document.createElement('button');b.id='kidsCommLauncher';b.type='button';b.textContent='สื่อสารสมาชิก';b.style.cssText='position:fixed;right:18px;bottom:18px;z-index:9998;border:0;border-radius:999px;padding:13px 18px;background:#155e75;color:#fff;box-shadow:0 8px 25px #0003;font-weight:700;cursor:pointer';b.onclick=openMemberCommunications;b.title='Member Chat • Private Messages • Bulletin';document.body.appendChild(b);}
@@ -26,7 +27,7 @@ function commSendPrivate_(){var s=document.getElementById('commContact'),t=docum
 function commSendSupport_(){var t=document.getElementById('commSupportText').value;commFiles_('commSupportFiles',function(f){commCall_('sendAdminSupportMessage',[TOKEN,t,f],function(){document.getElementById('commSupportText').value='';commLoadSupport_();});});}
 function commLoadSupport_(){commCall_('getAdminSupportMessages',[TOKEN],function(a){commRenderMessages_('commSupportList',a,commIsAdmin_());});}
 function commLoadAdminPrivate_(){commCall_('getAdminPrivateMessages',[TOKEN],function(a){commRenderMessages_('commAdminPrivateList',a,true);});}
-function commDelete_(id){Swal.fire({title:'ยืนยันการลบข้อความ',input:'textarea',inputLabel:'ระบุเหตุผลการลบ (จำเป็น)',showCancelButton:true,confirmButtonText:'ลบข้อความ',inputValidator:function(v){return String(v||'').trim().length<3?'กรุณาระบุเหตุผลอย่างน้อย 3 ตัวอักษร':undefined;}}).then(function(x){if(!x.isConfirmed)return;commCall_('deleteCommunicationMessage',[TOKEN,id,x.value],function(){var tab=document.getElementById('kidsCommBody').dataset.tab;commTab_(tab);});});}
+function commDelete_(id){Swal.fire({title:'ยืนยันการลบข้อความ',input:'textarea',inputLabel:'ระบุเหตุผลการลบ (จำเป็น)',showCancelButton:true,confirmButtonText:'ลบข้อความ',inputValidator:function(v){return String(v||'').trim().length>=3?undefined:'กรุณาระบุเหตุผลอย่างน้อย 3 ตัวอักษร';}}).then(function(x){if(!x.isConfirmed)return;commCall_('deleteCommunicationMessage',[TOKEN,id,x.value],function(){var tab=document.getElementById('kidsCommBody').dataset.tab;commTab_(tab);});});}
 function commShowAttachment_(id){commCall_('getCommunicationAttachment',[TOKEN,id],function(d){var w=window.open('','_blank');if(!w){Swal.fire('เบราว์เซอร์บล็อกหน้าต่าง','อนุญาต popup เพื่อดูภาพ','info');return;}w.document.write('<title>'+escapeHtml(d.name)+'</title><img style="max-width:100%;height:auto" src="'+d.data+'">');});}
 function commLoadBulletin_(){
  commCall_('getBulletinPosts',[TOKEN],function(a){
@@ -45,3 +46,4 @@ function commCreatePost_(){var t=document.getElementById('commPostText').value;c
 function commReact_(id){commCall_('reactBulletinPost',[TOKEN,id,'like'],commLoadBulletin_);}
 function commComment_(id){Swal.fire({title:'แสดงความคิดเห็น',input:'textarea',showCancelButton:true}).then(function(x){if(x.isConfirmed)commCall_('addBulletinComment',[TOKEN,id,x.value,''],commLoadBulletin_);});}
 function commDeletePost_(id){if(!confirm('ต้องการลบโพสต์นี้หรือไม่'))return;commCall_('deleteOwnBulletinPost',[TOKEN,id],commLoadBulletin_);}
+</script>
