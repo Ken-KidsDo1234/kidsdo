@@ -555,3 +555,52 @@ Do not assume parse failure based only on typeof openLogin from the parent frame
 - Public route handlers were left unchanged because their route keys are fixed and record IDs are restricted to safe characters.
 - The composed client script parses, and handler arguments round-trip correctly for apostrophes, quotes, backslashes, newlines, semicolons, and script-like input.
 - This fixes the unsafe handler construction, but does not confirm it caused the reported `Unexpected token ';'`; a runtime/deployed-page error remains unverified.
+
+### Session End
+
+Date: 2026-11-15
+Time: 20:15 PST
+
+Current Status
+
+- Deployment verified
+- TEST VERSION verified
+- Google Sheet verified
+- Google Drive verified
+- Source parsing verified
+
+Outstanding Issue
+
+userCodeAppPanel:273
+Unexpected token ';'
+
+Latest Findings
+
+- Dynamic onclick handlers audited
+- Added escapeJsAttr()
+- Refactored attachment viewer investigation
+- Root cause still not confirmed
+
+
+### File Size Investigation
+
+File:
+Index.html
+
+Findings:
+
+- File size is approximately 5.35 MB
+- Main cause is an embedded Base64 GIF
+- GIF is approximately 4.32 MB
+- Embedded image existed since the first commit:
+  "KidsDo First Backup"
+
+Conclusion:
+
+Large file size is not caused by duplicated content
+and not caused by repeated saves.
+
+Future improvement:
+
+Move large embedded images out of Index.html and load them as separate files.
+
