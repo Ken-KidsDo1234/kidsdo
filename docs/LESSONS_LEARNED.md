@@ -491,3 +491,29 @@ This explains:
 - Navigation does not work
 - Music Library does not work
 
+### Browser Investigation
+
+Results:
+
+typeof openLogin === undefined
+typeof start === undefined
+typeof showPublic === undefined
+typeof openLibrary === undefined
+
+Additional finding:
+
+frames[0] is sandboxFrame.
+
+Attempting:
+
+frames[0].eval(...)
+
+fails with:
+
+SecurityError
+
+because Apps Script uses a cross-origin iframe.
+
+Conclusion:
+
+Browser-side runtime inspection is restricted by Apps Script sandbox isolation.
