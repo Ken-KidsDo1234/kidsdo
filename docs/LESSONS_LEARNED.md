@@ -433,3 +433,61 @@ Unexpected token ';'
 
 Investigation continues.
 
+### Runtime Observation
+
+Library buttons do not work.
+
+Buttons:
+
+- Music
+- Picture
+- Document
+
+Current behavior:
+
+- Clicking does nothing
+
+Historical behavior:
+
+- Scrolled to the library section lower on the page
+- Displayed content within the same page
+
+Investigation required:
+
+- openLibrary()
+- Library navigation flow
+- Dynamic rendering
+
+### Major Breakthrough
+
+Browser test:
+
+typeof openLogin
+undefined
+
+typeof showPublic
+undefined
+
+typeof openLibrary
+undefined
+
+typeof start
+undefined
+
+Conclusion:
+
+The main script never finishes parsing.
+
+The error:
+
+userCodeAppPanel:273
+Unexpected token ';'
+
+occurs before global functions are defined.
+
+This explains:
+
+- Login button does not work
+- Navigation does not work
+- Music Library does not work
+
