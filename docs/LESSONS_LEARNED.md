@@ -547,3 +547,11 @@ No confirmed root cause.
 Many previously suspected causes have been eliminated.
 
 Do not assume parse failure based only on typeof openLogin from the parent frame.
+
+## 2026-11-18 Dynamic Handler Argument Audit
+
+- Dynamic `onclick` arguments sourced from records, users, calendar events, library files, and member communications were HTML-escaped only; that does not make values safe JavaScript string literals.
+- Added `escapeJsAttr()` to JSON-encode an argument and then HTML-escape it. Updated affected generated handlers in `Index.html` and `MemberCommsUI.html`.
+- Public route handlers were left unchanged because their route keys are fixed and record IDs are restricted to safe characters.
+- The composed client script parses, and handler arguments round-trip correctly for apostrophes, quotes, backslashes, newlines, semicolons, and script-like input.
+- This fixes the unsafe handler construction, but does not confirm it caused the reported `Unexpected token ';'`; a runtime/deployed-page error remains unverified.

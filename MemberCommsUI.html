@@ -10,7 +10,15 @@ function commTab_(tab){var h=document.getElementById('kidsCommBody');if(!h)retur
  if(tab==='bulletin'){h.innerHTML='<textarea id="commPostText" rows="3" style="width:100%;box-sizing:border-box" placeholder="แบ่งปันข่าวสารหรือผลงานกับสมาชิก"></textarea><input id="commPostFiles" type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple><button onclick="commCreatePost_()">เผยแพร่โพสต์</button><div id="commBulletinList" style="margin-top:14px"></div>';commLoadBulletin_();return;}
  if(tab==='adminPrivate'){h.innerHTML='<p>Admin สามารถตรวจสอบข้อความส่วนตัวตามสิทธิ์ที่แจ้งสมาชิกไว้ และลบพร้อมบันทึกเหตุผลใน Logs</p><button onclick="commLoadAdminPrivate_()">โหลดข้อความส่วนตัวทั้งหมด</button><div id="commAdminPrivateList"></div>';commLoadAdminPrivate_();}}
 function commFiles_(inputId,cb){var el=document.getElementById(inputId),files=el&&el.files?Array.prototype.slice.call(el.files,0,4):[];if(!files.length){cb([]);return;}var out=[],i=0;function next(){if(i>=files.length){cb(out);return;}var f=files[i++];if(f.size>2*1024*1024){Swal.fire('ไฟล์ใหญ่เกินไป','ภาพแต่ละไฟล์ต้องไม่เกิน 2 MB','warning');return;}var rd=new FileReader();rd.onload=function(){out.push({name:f.name,mimeType:f.type,data:rd.result});next();};rd.onerror=function(){Swal.fire('อ่านไฟล์ไม่ได้',f.name,'error');};rd.readAsDataURL(f);}next();}
-function commRenderMessages_(target,items,adminTools){var el=document.getElementById(target);if(!el)return;el.innerHTML=(items||[]).map(function(m){return '<article style="padding:10px;margin:8px 0;border:1px solid #e2e8f0;border-radius:12px"><b>'+escapeHtml(m.senderName||'สมาชิก')+'</b><small style="float:right;color:#64748b">'+escapeHtml(m.createdAt||'')+'</small><p style="white-space:pre-wrap;margin:7px 0">'+escapeHtml(m.body||'')+'</p>'+(m.attachments||[]).map(function(a){return '<button style="font-size:12px" onclick="commShowAttachment_(\''+escapeHtml(a.id)+'\')">ดูภาพ: '+escapeHtml(a.fileName)+'</button>';}).join(' ')+(adminTools?'<button style="float:right" onclick="commDelete_(\''+escapeHtml(m.id)+'\')">ลบ (Admin)</button>':'')+'</article>';}).join('')||'<p style="color:#64748b">ยังไม่มีข้อความ</p>';}
+function commRenderMessages_(target,items,adminTools){
+ var el=document.getElementById(target);
+ if(!el)return;
+ el.innerHTML=(items||[]).map(function(m){
+  return '<article style="padding:10px;margin:8px 0;border:1px solid #e2e8f0;border-radius:12px"><b>'+escapeHtml(m.senderName||'สมาชิก')+'</b><small style="float:right;color:#64748b">'+escapeHtml(m.createdAt||'')+'</small><p style="white-space:pre-wrap;margin:7px 0">'+escapeHtml(m.body||'')+'</p>'+(m.attachments||[]).map(function(a){
+   return '<button style="font-size:12px" onclick="commShowAttachment_('+escapeJsAttr(a.id)+')">ดูภาพ: '+escapeHtml(a.fileName)+'</button>';
+  }).join(' ')+(adminTools?'<button style="float:right" onclick="commDelete_('+escapeJsAttr(m.id)+')">ลบ (Admin)</button>':'')+'</article>';
+ }).join('')||'<p style="color:#64748b">ยังไม่มีข้อความ</p>';
+}
 function commLoadGroup_(){var r=document.getElementById('commRoom');if(!r||!r.value)return;commCall_('getGroupMessages',[TOKEN,r.value],function(a){commRenderMessages_('commGroupList',a,false);});}
 function commSendGroup_(){var r=document.getElementById('commRoom').value,t=document.getElementById('commGroupText').value;commFiles_('commGroupFiles',function(f){commCall_('sendGroupMessage',[TOKEN,r,t,f],function(){document.getElementById('commGroupText').value='';commLoadGroup_();});});}
 function commLoadPrivate_(){var s=document.getElementById('commContact');if(!s||!s.value)return;commCall_('getPrivateMessages',[TOKEN,s.value],function(a){commRenderMessages_('commPrivateList',a,false);});}
@@ -20,7 +28,19 @@ function commLoadSupport_(){commCall_('getAdminSupportMessages',[TOKEN],function
 function commLoadAdminPrivate_(){commCall_('getAdminPrivateMessages',[TOKEN],function(a){commRenderMessages_('commAdminPrivateList',a,true);});}
 function commDelete_(id){Swal.fire({title:'ยืนยันการลบข้อความ',input:'textarea',inputLabel:'ระบุเหตุผลการลบ (จำเป็น)',showCancelButton:true,confirmButtonText:'ลบข้อความ',inputValidator:function(v){return String(v||'').trim().length<3?'กรุณาระบุเหตุผลอย่างน้อย 3 ตัวอักษร':undefined;}}).then(function(x){if(!x.isConfirmed)return;commCall_('deleteCommunicationMessage',[TOKEN,id,x.value],function(){var tab=document.getElementById('kidsCommBody').dataset.tab;commTab_(tab);});});}
 function commShowAttachment_(id){commCall_('getCommunicationAttachment',[TOKEN,id],function(d){var w=window.open('','_blank');if(!w){Swal.fire('เบราว์เซอร์บล็อกหน้าต่าง','อนุญาต popup เพื่อดูภาพ','info');return;}w.document.write('<title>'+escapeHtml(d.name)+'</title><img style="max-width:100%;height:auto" src="'+d.data+'">');});}
-function commLoadBulletin_(){commCall_('getBulletinPosts',[TOKEN],function(a){var el=document.getElementById('commBulletinList');if(!el)return;el.innerHTML=(a||[]).map(function(p){return '<article style="border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin:10px 0"><b>'+escapeHtml(p.authorName)+'</b><p style="white-space:pre-wrap">'+escapeHtml(p.body)+'</p>'+(p.attachments||[]).map(function(x){return '<button onclick="commShowAttachment_(\''+escapeHtml(x.id)+'\')">ดูภาพ '+escapeHtml(x.fileName)+'</button>';}).join(' ')+'<p><button onclick="commReact_(\''+escapeHtml(p.id)+'\')">👍 ถูกใจ ('+(p.reactions||[]).length+')</button> <button onclick="commComment_(\''+escapeHtml(p.id)+'\')">แสดงความคิดเห็น</button> '+(p.authorId===CURRENT_USER.id||commIsAdmin_()?'<button onclick="commDeletePost_(\''+escapeHtml(p.id)+'\')">ลบโพสต์</button>':'')+'</p><div>'+((p.comments||[]).map(function(c){return '<p style="margin-left:12px;color:#475569"><b>'+escapeHtml(c.authorName)+':</b> '+escapeHtml(c.body)+'</p>';}).join(''))+'</div></article>';}).join('')||'<p>ยังไม่มีโพสต์</p>';});}
+function commLoadBulletin_(){
+ commCall_('getBulletinPosts',[TOKEN],function(a){
+  var el=document.getElementById('commBulletinList');
+  if(!el)return;
+  el.innerHTML=(a||[]).map(function(p){
+   return '<article style="border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin:10px 0"><b>'+escapeHtml(p.authorName)+'</b><p style="white-space:pre-wrap">'+escapeHtml(p.body)+'</p>'+(p.attachments||[]).map(function(x){
+    return '<button onclick="commShowAttachment_('+escapeJsAttr(x.id)+')">ดูภาพ '+escapeHtml(x.fileName)+'</button>';
+   }).join(' ')+'<p><button onclick="commReact_('+escapeJsAttr(p.id)+')">👍 ถูกใจ ('+(p.reactions||[]).length+')</button> <button onclick="commComment_('+escapeJsAttr(p.id)+')">แสดงความคิดเห็น</button> '+(p.authorId===CURRENT_USER.id||commIsAdmin_()?'<button onclick="commDeletePost_('+escapeJsAttr(p.id)+')">ลบโพสต์</button>':'')+'</p><div>'+((p.comments||[]).map(function(c){
+    return '<p style="margin-left:12px;color:#475569"><b>'+escapeHtml(c.authorName)+':</b> '+escapeHtml(c.body)+'</p>';
+   }).join(''))+'</div></article>';
+  }).join('')||'<p>ยังไม่มีโพสต์</p>';
+ });
+}
 function commCreatePost_(){var t=document.getElementById('commPostText').value;commFiles_('commPostFiles',function(f){commCall_('createBulletinPost',[TOKEN,t,f],function(){document.getElementById('commPostText').value='';commLoadBulletin_();});});}
 function commReact_(id){commCall_('reactBulletinPost',[TOKEN,id,'like'],commLoadBulletin_);}
 function commComment_(id){Swal.fire({title:'แสดงความคิดเห็น',input:'textarea',showCancelButton:true}).then(function(x){if(x.isConfirmed)commCall_('addBulletinComment',[TOKEN,id,x.value,''],commLoadBulletin_);});}
