@@ -517,3 +517,33 @@ because Apps Script uses a cross-origin iframe.
 Conclusion:
 
 Browser-side runtime inspection is restricted by Apps Script sandbox isolation.
+
+### Investigation Correction
+
+Previous assumption:
+
+typeof openLogin === undefined
+proved script parsing failed.
+
+Status:
+
+NOT CONFIRMED.
+
+Reason:
+
+The value was collected from the parent Apps Script frame.
+
+The browser blocks direct inspection of sandboxFrame due to cross-origin restrictions.
+
+Result:
+
+
+Current Status:
+
+Unexpected token ';' still occurs.
+
+No confirmed root cause.
+
+Many previously suspected causes have been eliminated.
+
+Do not assume parse failure based only on typeof openLogin from the parent frame.
