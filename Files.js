@@ -55,6 +55,27 @@ function getKidsLibraryCovers() {
     return response_(result);
   } catch(e) { return error_(e); }
 }
+function getKidsWebsiteBackground() {
+  try {
+    var folder=DriveApp.getFolderById('1gY0GcQ33Fve1TZcV5Z111AAW7Yi-OjMv');
+    var pending=[folder],file=null,count=0;
+    for(var i=0;i<pending.length;i++) {
+      var matches=pending[i].getFilesByName('Black ground2.jpg');
+      while(matches.hasNext()) {
+        var candidate=matches.next();
+        if(/^image\/(png|jpeg|gif|webp)$/i.test(String(candidate.getMimeType()))) {
+          file=candidate;
+          count++;
+        }
+      }
+      var subfolders=pending[i].getFolders();
+      while(subfolders.hasNext()) pending.push(subfolders.next());
+    }
+    if(count!==1) throw new Error('คาดว่าจะพบภาพ Black ground2.jpg เพียง 1 ไฟล์ในโฟลเดอร์ที่กำหนดและโฟลเดอร์ย่อย แต่พบ '+count+' ไฟล์');
+    var mimeType=file.getMimeType(),data=Utilities.base64Encode(file.getBlob().getBytes());
+    return response_({name:file.getName(),mimeType:mimeType,sizeBytes:file.getSize(),dataUrl:'data:'+mimeType+';base64,'+data});
+  } catch(e) { return error_(e); }
+}
 function getKidsLibraryFile(token,fileId) {
   try {
     var s=session_(token);

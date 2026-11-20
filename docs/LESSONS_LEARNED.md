@@ -576,6 +576,54 @@ Latest Findings
 - Runtime syntax error traced to escaped less-than operators in included client scripts
 - Login must be retested after publishing the saved source
 
+### 2026-11-19 Deployment Verification
+
+- `AdminTools.js` contained malformed prose and code-fence text before `auditSheetData()`; Apps Script rejected the project with a syntax error on line 84.
+- Removed the malformed duplicate block and pushed all 16 source files successfully.
+- Created Apps Script version 26.
+- Redeployed the existing web-app deployment to version 26.
+- Live `/exec` smoke test returned HTTP 200.
+- Live HTML contained the login markup.
+- Live HTML contained neither literal `&lt;` nor `&#43;` entities.
+
+### 2026-11-19 Browser Smoke Test
+
+- Opened the redeployed live `/exec` page in a real browser.
+- The public website rendered successfully.
+- `openLogin`, `showPublic`, `openLibrary`, and `start` existed as functions in the live sandbox frame.
+- The Login dialog opened and showed username/password fields.
+- The news route changed to `#/news` and rendered its public route page.
+- The Music library button loaded the library state.
+- No `Unexpected token ';'` syntax error occurred during the browser smoke test.
+- The browser reported a separate page error with message `Dr`; this was not the previous semicolon syntax error and requires a focused follow-up only if it affects a tested interaction.
+
+### 2026-11-19 Public Route and Library Test
+
+- On the tested version 26 web app, Home, News, Activities, Staff, Calendar, Awards, Downloads, Library, and About rendered. Public News, Activities, Staff, Awards, and Downloads each returned 0 records in this deployment.
+- Contact failed with `ReferenceError: safeExternalUrl is not defined`. The helper is referenced by public-page code but no definition exists in the current source.
+- The library API returned:
+  - Music: 0 files
+  - Picture: 6 PNG files
+  - Document: 0 files
+- Picture files listed by the site:
+  - `5c389ca2-e976-4837-9d91-0013dc32482b.png` — 2.60 MB
+  - `96fb9705-966a-4b05-b3bd-6adc3bba0b2d.png` — 2.33 MB
+  - `Doc Kids.png` — 1.99 MB
+  - `Music Kids.png` — 2.01 MB
+  - `Picture Kids.png` — 1.96 MB
+  - `ดนตรีพาสเทลแสนสดใส.png` — 1.76 MB
+- The page could list file names through Apps Script, but in an unauthenticated browser only `ดนตรีพาสเทลแสนสดใส.png` loaded as a thumbnail. The other five preview requests redirected to Google sign-in, so their current Drive sharing does not permit anonymous preview.
+- `Core.js` labels these library folder IDs as TEST; confirm the intended production folders before moving or sharing files.
+
+### 2026-11-19 Contact Route Fix
+
+- Added the missing `safeExternalUrl()` client helper in `Index.html`. It accepts absolute HTTP/HTTPS URLs and rejects unsupported protocols and malformed/relative values.
+- Parsed all inline client scripts and checked HTTP/HTTPS acceptance plus JavaScript/data/relative URL rejection.
+- Pushed the source, created Apps Script version 27, and updated the existing web-app deployment to version 27.
+- Live `/exec` test: Contact route rendered without the prior `ReferenceError`; News route also rendered.
+- A separate page error with message `Dr` remains unexplained. Public image requests for Drive files that require sign-in continue to fail for anonymous users.
+- Rechecked all three configured library folders on version 27: Music returned 0 files, Picture returned the same 6 PNGs, and Document returned 0 files. The existing folder mapping was retained.
+
 
 ### File Size Investigation
 
@@ -627,4 +675,36 @@ Move large embedded images out of Index.html and load them as separate files.
 4. Update the existing web-app deployment to a new version.
 5. Test the live `/exec` page: check for JavaScript syntax errors and confirm the Login dialog opens. Do not enter credentials.
 6. Record the deployment and smoke-test results here. Do not mark the issue fixed unless the live test passes.
+
+## 2026-11-19 Background image update
+
+- The existing deployment was updated to version 29, `Use Black ground2 background image`.
+- `Files.js` now looks for `Black ground2.png` in the configured Drive folder. The website background loader logs a success message with the image name and byte size when the image loads.
+- Static JavaScript parsing and `git diff --check` passed. The diff check reported only existing LF-to-CRLF warnings.
+- Browser automation reached the public Apps Script page, but its inner app iframe remained blank. The live background therefore could not be visually confirmed through automation; check the browser console for `[Kids Do website background] loaded` or a server error on a successful page load.
+- Login/Admin code was not changed in this update. The user had reported that login, Admin entry, and logout were working.
+- On the next live check, the console reported that `Black ground2.png` was found 0 times in the configured folder. Version 30 now searches that folder and its subfolders, but the live check still found 0 files. The image is outside that folder tree or has a different filename; the correct Drive file ID or folder ID is needed before the background can load.
+- The user clarified the actual filename is `Black ground2.jpg`. Version 31 now searches for that filename in the configured folder tree and is deployed. Live browser verification confirmed `.adventure-world` has an active `data:image/jpeg` background, `cover` sizing, and a 1,952 px section height. JavaScript parsing and `git diff --check` passed; Login/Admin were not changed.
+- The user confirmed the background now works.
+
+## Handoff for 2026-11-20
+
+### Completed today
+
+- Deployed web-app version 31 using `Black ground2.jpg` from Drive folder `1gY0GcQ33Fve1TZcV5Z111AAW7Yi-OjMv`.
+- Verified the live page applies the JPEG data URL as the `.adventure-world` background with `cover` sizing.
+- Deployed version 33 to remove the visible `TEST VERSION 20` banner and the adjacent `...` placeholder; live browser reload confirmed both are gone and the home page still renders.
+- Login/Admin behavior was not changed.
+- No new activities, staff, calendar events, or library files were added today.
+
+### Planned tests
+
+Test create/edit/display/cleanup flows for:
+
+- Activities and staff records in Admin.
+- Calendar events in Admin and their public calendar display.
+- Picture, music, and document uploads/files in the existing Drive library folders, including website listing/preview behavior.
+- Confirm each test item can be edited and removed, then clean up temporary test records/files so no test content remains public.
+
+Do not overwrite or delete existing user content. Check the deployed `/exec` page after each category and record any errors before changing unrelated code.
 

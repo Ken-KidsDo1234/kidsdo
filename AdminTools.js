@@ -81,54 +81,6 @@ function clearDemoData(token) {
     clearRuntimeCaches_();log_(s.username,'clearDemo','Demo','ลบ Demo '+count+' รายการ');return response_({deleted:count});
   }catch(e){return error_(e);}
 }
-Here is the full source of `auditSheetData()`:
-
-```javascript
-function auditSheetData() {
-  var spreadsheet = db_();
-  var patterns = ["'", '"', '\\', '</script>', '<script', 'javascript:', 'onclick=', 'onerror=', ';'];
-  var findings = [];
-
-  spreadsheet.getSheets().forEach(function(sh) {
-    var lastRow = sh.getLastRow(), lastColumn = sh.getLastColumn();
-    if (lastRow < 2 || lastColumn < 1) return;
-
-    var data = sh.getRange(1, 1, lastRow, lastColumn).getDisplayValues();
-    var headers = data[0];
-    for (var r = 1; r < data.length; r++) {
-      for (var c = 0; c < data[r].length; c++) {
-        var value = data[r][c];
-        if (!value) continue;
-        var normalized = value.toLowerCase();
-        var columnName = String(headers[c] || ('Column ' + (c + 1)));
-        var redact = /password|passwd|secret|token|credential|api.?key|private.?key/i.test(columnName);
-        patterns.forEach(function(pattern) {
-          if (normalized.indexOf(pattern.toLowerCase()) >= 0) {
-            findings.push([
-              sh.getName(),
-              r + 1,
-              columnName,
-              pattern,
-              redact ? '[REDACTED]' : value
-            ]);
-          }
-        });
-      }
-    }
-  });
-
-  var rows = [['Sheet', 'Row', 'Column', 'Pattern', 'Value']].concat(findings);
-  var csv = '\uFEFF' + rows.map(function(row) {
-    return row.map(function(value) {
-      var text = String(value === null || value === undefined ? '' : value);
-      if (/^[=+\-@]/.test(text)) text = "'" + text;
-      return '"' + text.replace(/"/g, '""') + '"';
-    }).join(',');
-  }).join('\r\n');
-  var file = DriveApp.getRootFolder().createFile('suspicious_data_report.csv', csv, MimeType.CSV);
-  return file.getUrl();
-}
-```
 function auditSheetData() {
   var spreadsheet = db_();
   var patterns = ["'", '"', '\\', '</script>', '<script', 'javascript:', 'onclick=', 'onerror=', ';'];
