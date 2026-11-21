@@ -133,6 +133,7 @@ Claude
 DeepSeek
 Microsoft Copilot
 ทุก AI ต้องอ่าน PROJECT.md ก่อนเริ่มทำงาน
+ก่อนแก้ไข UI, ข้อมูล หรือเส้นทางการทำงาน ต้องอ่าน `AI_CONTEXT.md`, `ARCHITECTURE.md` และ `IMAGE_ASSETS.md` รวมถึงดูภาพต้นฉบับที่เกี่ยวข้อง แล้วตรวจสอบกับโค้ดปัจจุบันก่อนนำไปใช้
 
 กฎการพัฒนา
 ห้ามรื้อโครงสร้าง Google Apps Script เดิม หากไม่จำเป็น
